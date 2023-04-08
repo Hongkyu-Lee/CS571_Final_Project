@@ -2,7 +2,6 @@ import os
 import re
 import csv
 
-
 def open_raw_dataset(raw_path, dataset):
 
     tsv = open(os.path.join(raw_path, dataset), "r+")

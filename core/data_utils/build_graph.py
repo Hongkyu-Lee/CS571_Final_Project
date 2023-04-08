@@ -446,7 +446,3 @@ def get_data(basepath:str, datasetname:str, windowsize:int=20):
         y_tr_path, x_ts_path, y_ts_path, x_val_path, y_val_path, x_all_path, y_all_path, adj_path)
 
     return x_tr, y_tr, x_ts, y_ts, x_val, y_val, x_all, y_all, adj
-
-
-if __name__ == "__main__":
-    x_tr, y_tr, x_ts, y_ts, x_val, y_val, x_all, y_all, adj = get_data("./data", "")

@@ -12,6 +12,7 @@ import re
 
 from core.data_utils.utils import open_raw_dataset
 
+# Check contributions
 
 def build_edges(doc_list, word_id_map, vocab, word_doc_freq, window_size=20):
     # constructing all windows
