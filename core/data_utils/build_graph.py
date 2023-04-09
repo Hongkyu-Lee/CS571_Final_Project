@@ -74,7 +74,9 @@ def process_sentences(basepath, datasetname):
         with open(os.path.join(basepath, datasetname, "processed", f"{datasetname}_label_{name[:-4]}.txt"), "w+") as _file:
             for l in raw_labels:
                 _file.write(f"{l}\n")
-        x_all_list.append(clean_sents)          
+        
+        if "test" not in name:
+            x_all_list.append(clean_sents)          
                   
 
         # Save labels
