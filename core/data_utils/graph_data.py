@@ -59,6 +59,7 @@ class TextGraphData(object):
         
         # Graph Setting
         # Graph Setting
+        # Graph Setting
         adj_norm = normalize_adj(self.adj + sp.eye(self.adj.shape[0]))
         self.g = dgl.from_scipy(adj_norm.astype('float32'), eweight_name='edge_weight')
         
