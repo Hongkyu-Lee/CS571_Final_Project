@@ -98,7 +98,6 @@ def process_sentences(basepath, datasetname):
         for l in y_all:
             _file.write(f"{l}\n")
 
-
 def save_onehot_labels(basepath, filepaths, datasetname):
 
     # filepaths order: [train, val, test, all]
@@ -129,7 +128,6 @@ def save_onehot_labels(basepath, filepaths, datasetname):
     f = open(filepaths[-1], "wb")
     pickle.dump(y_all, f)
     f.close()
-
 
 def count_vocab(x_all:list):
     word_freq = dict()
@@ -373,7 +371,6 @@ def process_data(basepath:str, filepaths:list, datasetname:str, windowsize:int=2
                    path=adj_path,
                    windowsize=windowsize)
 
-
 def load_data(x_tr_path, y_tr_path, x_ts_path, y_ts_path,
               x_val_path, y_val_path, x_all_path, y_all_path, adj_path):
     _x_tr = open(x_tr_path, "rb")
@@ -407,7 +404,6 @@ def load_data(x_tr_path, y_tr_path, x_ts_path, y_ts_path,
     _adj.close()
 
     return x_tr, y_tr, x_ts, y_ts, x_val, y_val, x_all, y_all, adj
-
 
 def get_data(basepath:str, datasetname:str, windowsize:int=20):
 

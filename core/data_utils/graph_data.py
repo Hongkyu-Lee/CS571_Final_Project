@@ -7,7 +7,7 @@ import dgl
 
 from core.data_utils.utils import sample_mask, normalize_adj
 
-class TextGraphData(object):
+class TextGraphData:
 
     def __init__(self, adj, x_tr, y_tr, x_vl, y_vl,
                  x_ts, y_ts, x_all, y_all, batch_size):
@@ -26,6 +26,13 @@ class TextGraphData(object):
         self.val_mask = sample_mask(idx_val , labels.shape[0])
         self.test_mask = sample_mask(idx_test, labels.shape[0])
         self.doc_mask = self.train_mask + self.val_mask + self.test_mask
+
+        self.nb_node = features.shape[0]
+        self.nb_train = self.train_mask.sum()
+        self.nb_val = self.val_mask.sum()
+        self.nb_test = self.test_mask.sum()
+        self.nb_word = self.nb_node - self.nb_train - self.nb_val - self.nb_test
+
 
         y_train = np.zeros(labels.shape)
         y_val = np.zeros(labels.shape)
@@ -72,5 +79,3 @@ class TextGraphData(object):
         self.g.ndata['test'] = torch.FloatTensor(self.test_mask)
         self.g.ndata['label_train'] = torch.LongTensor(self.y_train_max)
         self.g.ndata['cls_feats'] = torch.zeros((self.feature_size, feat_dim))
-
-        self.
