@@ -22,8 +22,9 @@ def process_sentences(basepath, datasetname):
     train_raw = open_raw_dataset(os.path.join(basepath, datasetname), datasets[0])
     test_raw = open_raw_dataset(os.path.join(basepath, datasetname), datasets[1])
     val_raw = open_raw_dataset(os.path.join(basepath, datasetname), datasets[2])
-    
-    dataset_files=  (train_raw,test_raw, val_raw)
+
+    dataset_files=  (train_raw, test_raw, val_raw)
+
 
     x_all_list = list()
     y_all_list = list()
@@ -60,15 +61,16 @@ def process_sentences(basepath, datasetname):
             words = sent.split()
             words = [word for word in words if word not in stop_words and word_count[word] >= 5]
             sent = " ".join(words).strip()
-            if sent != "":
-                clean_sents.append(sent)
-            else:
-                clean_sents.append(" ")
+            # if sent != "":
+            #     clean_sents.append(sent)
+            # else:
+            #     clean_sents.append(" ")
+            clean_sents.append(sent)
 
         # Save sentences
-        with open(os.path.join(basepath, datasetname, "processed", f"{datasetname}_clean_{name[:-4]}.txt"), "w+") as _file:
+        with open(os.path.join(basepath, datasetname, "processed", f"{datasetname}_clean_{name[:-4]}.txt"), "a") as _f:
             for sent in clean_sents:
-                _file.write(f"{sent}\n")
+                _f.write(sent+"\n")
 
         # Save labels:
         with open(os.path.join(basepath, datasetname, "processed", f"{datasetname}_label_{name[:-4]}.txt"), "w+") as _file:
@@ -103,9 +105,9 @@ def save_onehot_labels(basepath, filepaths, datasetname):
     # filepaths order: [train, val, test, all]
     datasets = ("train.tsv", "dev.tsv", "test.tsv")
 
-    train_y = open_raw_dataset(os.path.join(basepath, datasetname, "processed"), f"{datasetname}_label_train.txt")
-    val_y = open_raw_dataset(os.path.join(basepath, datasetname, "processed"), f"{datasetname}_label_dev.txt")
-    test_y = open_raw_dataset(os.path.join(basepath, datasetname, "processed"), f"{datasetname}_label_test.txt")
+    train_y = open_txt_dataset(os.path.join(basepath, datasetname, "processed", f"{datasetname}_label_train.txt"))
+    val_y = open_txt_dataset(os.path.join(basepath, datasetname, "processed", f"{datasetname}_label_dev.txt"))
+    test_y = open_txt_dataset(os.path.join(basepath, datasetname, "processed", f"{datasetname}_label_test.txt"))
 
     y_tr = np.array(train_y)
     y_vl = np.array(val_y)
@@ -129,6 +131,39 @@ def save_onehot_labels(basepath, filepaths, datasetname):
     pickle.dump(y_all, f)
     f.close()
 
+def process_onehot_labels(train_y, val_y, test_y, vocab_size, filepaths):
+    
+    y_tr = np.array(train_y)
+    y_vl = np.array(val_y)
+    y_ts = np.array(test_y)
+    y_raw  = [y_tr, y_vl, y_ts]
+
+    # Process labels
+    total_label = np.concatenate(y_raw)
+    OH = OneHotEncoder()
+    OH.fit(total_label.reshape(-1, 1))
+
+    for i, raw_labels in enumerate(y_raw):
+        one_hot = OH.transform(raw_labels.reshape(-1, 1))
+        print(one_hot.shape)
+        f = open(filepaths[i], "wb")
+        pickle.dump(one_hot, f)
+        f.close()
+
+    y_all = np.concatenate((y_tr, y_vl))
+    onehot  = OH.transform(y_all.reshape(-1, 1))
+
+    voca_loc = np.zeros((vocab_size, onehot.shape[1]), dtype=onehot.dtype)
+    voca_los = sp.csr_matrix(voca_loc)
+    print(onehot.shape, voca_loc.shape, type(onehot))
+    onehot = sp.vstack((onehot, voca_loc))
+
+
+    f = open(filepaths[-1], "wb")
+    pickle.dump(onehot, f)
+    f.close()
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 def count_vocab(x_all:list):
     word_freq = dict()
     word_doc_list = dict()
@@ -167,12 +202,12 @@ def count_vocab(x_all:list):
 
 def create_and_save_feature(x_data:list, path:str, 
                             word_embeddings_dim:int=300,
-                            word_vector_map:dict={}):
+                            word_vector_map:dict={},
+                            word_vectors=None):
 
     row_x = list()
     col_x = list()
     data_x = list()
-
     for i, line in enumerate(x_data):
         doc_vec = np.array([0.0 for k in range(word_embeddings_dim)])
         words = line.split()
@@ -187,7 +222,19 @@ def create_and_save_feature(x_data:list, path:str,
             col_x.append(j)
             data_x.append(doc_vec[j] / doc_len)
 
-    x = sp.csr_matrix((data_x, (row_x, col_x)), shape=(len(x_data), word_embeddings_dim))
+    x_shape= len(x_data)
+
+    # for x_all, we need to append words
+    if word_vectors is not None:
+        for i in range(word_vectors.shape[0]):
+            for j in range(word_embeddings_dim):
+                row_x.append(int(i + len(x_data)))
+                col_x.append(j)
+                data_x.append(word_vectors.item(i, j))
+        x_shape += word_vectors.shape[0]
+    
+
+    x = sp.csr_matrix((data_x, (row_x, col_x)), shape=(x_shape, word_embeddings_dim))
     
     # sp.save_npz(path, x)
     f = open(path, 'wb')
@@ -311,11 +358,11 @@ def process_data(basepath:str, filepaths:list, datasetname:str, windowsize:int=2
     
     # directory check
 
-    if not os.path.exists(os.path.join(basepath, datasetname, "processed")):
-        os.makedirs(os.path.join(basepath, datasetname, "processed"))
+    # if not os.path.exists(os.path.join(basepath, datasetname, "processed")):
+    #     os.makedirs(os.path.join(basepath, datasetname, "processed"))
 
     # Clean sentneces
-    process_sentences(basepath, datasetname)
+    # process_sentences(basepath, datasetname)
 
     # Need to save x_tr, y_tr, x_ts, y_ts, x_val, y_val, x_all, y_all and adj_path
 
@@ -326,7 +373,12 @@ def process_data(basepath:str, filepaths:list, datasetname:str, windowsize:int=2
     x_vl_cl_path = os.path.join(basepath, datasetname, "processed", f"{datasetname}_clean_dev.txt")
     x_ts_cl_path = os.path.join(basepath, datasetname, "processed", f"{datasetname}_clean_test.txt")
     x_all_cl_path = os.path.join(basepath, datasetname, "processed", f"{datasetname}_clean_all.txt")
+    y_tr_label_path = os.path.join(basepath, datasetname, "processed", f"{datasetname}_label_train.txt")
+    y_vl_label_path = os.path.join(basepath, datasetname, "processed", f"{datasetname}_label_dev.txt")
+    y_ts_label_path = os.path.join(basepath, datasetname, "processed", f"{datasetname}_label_test.txt")
     vocab_path = os.path.join(basepath, datasetname, "processed", f"{datasetname}_vocab.txt")
+
+    word_embeddings_dim = 300
 
     x_path = filepaths[0]
     tx_path = filepaths[2]
@@ -342,10 +394,11 @@ def process_data(basepath:str, filepaths:list, datasetname:str, windowsize:int=2
     x_vl_cl = open_txt_dataset(x_vl_cl_path)
     x_ts_cl = open_txt_dataset(x_ts_cl_path)
     x_all_cl = open_txt_dataset(x_all_cl_path)
+    y_tr = open_txt_dataset(y_tr_label_path)
+    y_vl = open_txt_dataset(y_vl_label_path)
+    y_ts = open_txt_dataset(y_ts_label_path)
 
     # We will skip shuffling the dataset. We can shuffle it at batch-processing step.
-
-    save_onehot_labels(basepath, (y_path, vy_path, ty_path, ally_path), datasetname)
 
     # Get Vocab
     vocab, word_doc_freq, word_id_map = count_vocab(x_all_cl)
@@ -356,10 +409,17 @@ def process_data(basepath:str, filepaths:list, datasetname:str, windowsize:int=2
         for v in vocab:
             _file.write(f"{v}\n")
 
-    create_and_save_feature(x_data=x_tr_cl, path=x_path)
-    create_and_save_feature(x_data=x_ts_cl, path=tx_path)
-    create_and_save_feature(x_data=x_vl_cl, path=vx_path)
-    create_and_save_feature(x_data=x_all_cl, path=allx_path)
+    # Save labels
+    process_onehot_labels(y_tr, y_vl, y_ts, vocab_size, (y_path, vy_path, ty_path, ally_path))
+
+    word_vectors = np.random.uniform(-0.01, 0.01,
+                                 (vocab_size, word_embeddings_dim))
+
+    create_and_save_feature(x_data=x_tr_cl, path=x_path, word_embeddings_dim=word_embeddings_dim)
+    create_and_save_feature(x_data=x_ts_cl, path=tx_path, word_embeddings_dim=word_embeddings_dim)
+    create_and_save_feature(x_data=x_vl_cl, path=vx_path, word_embeddings_dim=word_embeddings_dim)
+    create_and_save_feature(x_data=x_all_cl, path=allx_path, word_embeddings_dim=word_embeddings_dim, word_vectors=word_vectors)
+
     
     ### Create a Graph
     create_a_graph(x_all_cl=x_all_cl,

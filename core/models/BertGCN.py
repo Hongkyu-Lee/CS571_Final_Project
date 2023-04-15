@@ -5,7 +5,7 @@ from core.models.GNN.GCN import GCN
 
 
 class BertGCN(torch.nn.Module):
-    def __init__(self, pretrained_model='roberta_base', nb_class=20, m=0.7, gcn_layers=2, n_hidden=200, dropout=0.5):
+    def __init__(self, pretrained_model='roberta-base', nb_class=20, m=0.7, gcn_layers=2, n_hidden=200, dropout=0.5):
         super(BertGCN, self).__init__()
         self.m = m
         self.nb_class = nb_class

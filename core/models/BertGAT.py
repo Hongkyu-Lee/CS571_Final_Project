@@ -4,7 +4,7 @@ from transformers import AutoModel, AutoTokenizer
 from core.models.GNN.GAT import GAT
 
 class BertGAT(torch.nn.Module):
-    def __init__(self, pretrained_model='roberta_base', nb_class=20, m=0.7, gcn_layers=2, heads=8, n_hidden=32, dropout=0.5):
+    def __init__(self, pretrained_model='roberta-base', nb_class=20, m=0.7, gcn_layers=2, heads=8, n_hidden=32, dropout=0.5):
         super(BertGAT, self).__init__()
         self.m = m
         self.nb_class = nb_class

@@ -1,10 +1,12 @@
 import os
 import re
 import csv
+import numpy as np
+import scipy.sparse as sp
 
 def open_raw_dataset(raw_path, dataset):
 
-    tsv = open(os.path.join(raw_path, dataset), "r+")
+    tsv = open(os.path.join(raw_path, dataset), "r")
     lines = csv.reader(tsv, delimiter="\t")
     dataset = list(lines)[1:]
 
@@ -13,7 +15,7 @@ def open_raw_dataset(raw_path, dataset):
 
 def open_txt_dataset(path):
     lines = list()
-    with open(path, "w+") as _file:
+    with open(path, "r") as _file:
         for l in _file:
             lines.append(l.strip())
     return lines
@@ -23,7 +25,7 @@ def sample_mask(idx, l):
     """Create mask."""
     mask = np.zeros(l)
     mask[idx] = 1
-    return np.array(mask, dtype=np.bool)
+    return np.array(mask, dtype=bool)
 
 
 def normalize_adj(adj):
