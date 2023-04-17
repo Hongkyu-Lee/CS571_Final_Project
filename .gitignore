@@ -1,3 +1,5 @@
 venv/
 reference/
 **__pycache__/
+result/
+.vscode/

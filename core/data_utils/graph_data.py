@@ -11,11 +11,15 @@ class TextGraphData:
 
     def __init__(self, adj, x_tr, y_tr, x_vl, y_vl,
                  x_ts, y_ts, x_all, y_all, batch_size):
-
-        print(adj.shape, x_tr.shape, y_tr.shape, x_vl.shape, y_vl.shape,
-                 x_ts.shape, y_ts.shape, x_all.shape, y_all.shape)
+        
+        # print(adj.shape, x_tr.shape, y_tr.shape, x_vl.shape, y_vl.shape,
+        #          x_ts.shape, y_ts.shape, x_all.shape, y_all.shape)
+        print(f'Number of train samples = {x_tr.shape[0]}')
+        print(f'Number of val samples = {x_vl.shape[0]}')
+        print(f'Number of test samples = {x_ts.shape[0]}')
         features = sp.vstack((x_all, x_ts)).tolil()
-        print("Features shape: ", features.shape)
+        # print("Features shape: ", features.shape)
+        print(f"Features length = {features.shape[1]}")
 
         # Load idx
         # we are not shuffling the data so just get them. 
@@ -26,7 +30,8 @@ class TextGraphData:
         y_all = y_all.toarray()
 
         labels = np.vstack((y_all, y_ts))
-        print(labels.shape)
+        # print(labels.shape)
+        print(f'Number of classes = {labels.shape[1]}')
 
         idx_train = range(len(y_tr))
         idx_val = range(len(idx_train), len(idx_train)+len(y_vl))

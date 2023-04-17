@@ -63,10 +63,11 @@ class Trainer:
                         train_acc = accuracy_score(y_true, y_pred)
                     else:
                         train_acc = 1
+                print(f'Train acc: {train_acc}')
                 pbar.update()
             pbar.close()
             
-
+            
             if epoch % self.eval_interval == 0:
                 self.test(model)
 
