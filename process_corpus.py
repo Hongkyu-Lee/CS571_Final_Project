@@ -6,7 +6,7 @@ from core.data_utils.build_graph import get_data, process_sentences
 if __name__ == "__main__":
 
     basepath = "./data/sentiment/"
-    datasetname ="orig"
+    datasetname ="new"
 
     # shutil.rmtree(os.path.join(basepath, datasetname, "processed"))
 
