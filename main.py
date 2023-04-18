@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 
 from core.data_utils import get_data
 from core.data_utils import TextGraphData
-from core.trainer.train import Trainer
+from core.trainer import Trainer
 from core.models import model_selector
 
 
