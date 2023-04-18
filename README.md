@@ -17,7 +17,7 @@ Create a model based on [BertGCN] that is robust against on [counterfactually re
 | 4/9 | 4/10| 4/11| 4/12| 4/13| 4/14| 4/15|
 |     |     |     | Presentation  |  |  |   |
 | 4/16 | 4/17| 4/18| 4/19| 4/20| 4/21| 4/22|
-| <br>    |     |     |     |  |  |   |
+| <br>    |  Finished model implementation  |     |     |  |  |   |
 | 4/23 | 4/24| 4/25| 4/26| 4/27| 4/28| 4/29|
 |      |     |     | Report Due  |  |  |   |
 

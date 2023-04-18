@@ -121,7 +121,7 @@ def save_onehot_labels(basepath, filepaths, datasetname):
 
     for i, raw_labels in enumerate(y_raw):
         one_hot = OH.transform(raw_labels.reshape(-1, 1))
-        print(one_hot.shape)
+        # print(one_hot.shape)
         f = open(filepaths[i], "wb")
         pickle.dump(one_hot, f)
         f.close()
@@ -145,7 +145,7 @@ def process_onehot_labels(train_y, val_y, test_y, vocab_size, filepaths):
 
     for i, raw_labels in enumerate(y_raw):
         one_hot = OH.transform(raw_labels.reshape(-1, 1))
-        print(one_hot.shape)
+        # print(one_hot.shape)
         f = open(filepaths[i], "wb")
         pickle.dump(one_hot, f)
         f.close()
@@ -155,7 +155,7 @@ def process_onehot_labels(train_y, val_y, test_y, vocab_size, filepaths):
 
     voca_loc = np.zeros((vocab_size, onehot.shape[1]), dtype=onehot.dtype)
     voca_los = sp.csr_matrix(voca_loc)
-    print(onehot.shape, voca_loc.shape, type(onehot))
+    # print(onehot.shape, voca_loc.shape, type(onehot))
     onehot = sp.vstack((onehot, voca_loc))
 
 

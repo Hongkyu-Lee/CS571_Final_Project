@@ -38,6 +38,72 @@ def normalize_adj(adj):
     return adj.dot(d_mat_inv_sqrt).transpose().dot(d_mat_inv_sqrt).tocoo()
 
 
+def SCloadCorpus(basepath):
+    corpus = list()
+    datasetname = "orig"
+    dataset = "train"
+    with open(os.path.join(basepath, datasetname,
+                           "processed", f"{datasetname}_clean_{dataset}.txt"), "r") as f:
+        text = f.read()
+        text = text.replace('\\', '')
+        text = text.split('\n')
+    print(len(text))
+    print(text)
+    corpus += text
+
+    datasetname = "new"
+    dataset = "train"
+    with open(os.path.join(basepath, datasetname,
+                           "processed", f"{datasetname}_clean_{dataset}.txt"), "r") as f:
+        text = f.read()
+        text = text.replace('\\', '')
+        text = text.split('\n')
+    print(len(text))
+    corpus += text
+
+    datasetname = "orig"
+    dataset = "dev"
+    with open(os.path.join(basepath, datasetname,
+                           "processed", f"{datasetname}_clean_{dataset}.txt"), "r") as f:
+        text = f.read()
+        text = text.replace('\\', '')
+        text = text.split('\n')
+    print(len(text))
+    corpus += text
+
+    datasetname = "new"
+    dataset = "dev"
+    with open(os.path.join(basepath, datasetname,
+                           "processed", f"{datasetname}_clean_{dataset}.txt"), "r") as f:
+        text = f.read()
+        text = text.replace('\\', '')
+        text = text.split('\n')
+    print(len(text))
+    corpus += text
+
+    datasetname = "orig"
+    dataset = "test"
+    with open(os.path.join(basepath, datasetname,
+                           "processed", f"{datasetname}_clean_{dataset}.txt"), "r") as f:
+        text = f.read()
+        text = text.replace('\\', '')
+        text = text.split('\n')
+    print(len(text))
+    corpus += text
+
+    datasetname = "new"
+    dataset = "test"
+    with open(os.path.join(basepath, datasetname,
+                           "processed", f"{datasetname}_clean_{dataset}.txt"), "r") as f:
+        text = f.read()
+        text = text.replace('\\', '')
+        text = text.split('\n')
+    print(len(text))
+    corpus += text
+
+    return corpus
+
+
 def clean_sentence(string):
 
     # Remove unnecessary characters
