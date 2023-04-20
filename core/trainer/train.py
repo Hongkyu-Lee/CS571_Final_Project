@@ -6,7 +6,8 @@ from sklearn.metrics import accuracy_score, f1_score
 from torch.optim import lr_scheduler
 from tqdm import tqdm
 
-
+import numpy as np
+import time
 # TBA
 
 class Trainer:
@@ -200,10 +201,12 @@ class SCTrainer:
     def train(self, model):
 
         for epoch in range(self.epochs):
+            print(f'Epoch {epoch+1}:')
             model.train()
             model.to(self.device)
             self.txg.G = self.txg.G.to(self.device)
 
+            train_acc_ls = []
             pbar = tqdm(total=len(self.train_loader))
             for i, batch in enumerate(self.train_loader):
                 self.optim.zero_grad()
@@ -224,7 +227,11 @@ class SCTrainer:
                     else:
                         train_acc = 1
                 pbar.update()
+                pbar.set_description(f"train_acc={train_acc}")
+                train_acc_ls.append(train_acc)
+                time.sleep(0.1)
             pbar.close()
+            print('Train acc: ', np.mean(train_acc_ls))
             
 
             if epoch % self.eval_interval == 0:
@@ -277,7 +284,7 @@ class SCTrainer:
                 total += y_pred.shape[0]
             
             acc = (correct/total).item()
-            print("Test acc: ",acc)
+            print("Test acc: ", acc)
             f1 = 0
             self.test_metric.append((acc, f1))
             if acc > self.best_test_acc:
