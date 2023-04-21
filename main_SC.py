@@ -88,4 +88,6 @@ def main(args):
 if __name__ == "__main__":
     args = parser.parse_args()
     # print("Parsed")
+    os.makedirs('res', exist_ok=True)
+    args.output_path = os.path.join('res', args.transformer+'_'+args.gnn+'_'+args.test+'.txt')
     main(args)

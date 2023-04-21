@@ -197,11 +197,18 @@ class SCTrainer:
         else:
             raise ValueError(args["test"])
         
+        self.args = args
+
 
     def train(self, model):
 
+        print(f"training BertGCN with {self.args['transformer']} and {self.args['gnn']}")
+
+        f = open(self.args['output_file'], 'w')
+
         for epoch in range(self.epochs):
             print(f'Epoch {epoch+1}:')
+            print(f'Epoch {epoch+1}:', file=f)
             model.train()
             model.to(self.device)
             self.txg.G = self.txg.G.to(self.device)
@@ -231,15 +238,16 @@ class SCTrainer:
                 train_acc_ls.append(train_acc)
                 time.sleep(0.1)
             pbar.close()
-            print('Train acc: ', np.mean(train_acc_ls))
+            print('Train acc: ', np.mean(train_acc_ls), file=f)
             
 
             if epoch % self.eval_interval == 0:
-                self.test(model)
+                self.test(model, f)
 
             # Reset Graph
             self.reset_graph(model)
-
+        
+        f.close()
 
     def validate(self, model, G):
 
@@ -267,7 +275,7 @@ class SCTrainer:
                 self.best_valid_acc = acc
     
 
-    def test(self, model):
+    def test(self, model, f):
 
         correct = 0
         total = 0
@@ -284,7 +292,7 @@ class SCTrainer:
                 total += y_pred.shape[0]
             
             acc = (correct/total).item()
-            print("Test acc: ", acc)
+            print("Test acc: ", acc, file=f)
             f1 = 0
             self.test_metric.append((acc, f1))
             if acc > self.best_test_acc:
