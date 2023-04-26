@@ -47,8 +47,8 @@ def SCloadCorpus(basepath):
         text = f.read()
         text = text.replace('\\', '')
         text = text.split('\n')
-    print(len(text))
-    print(text)
+    # print(len(text))
+    # print(text)
     corpus += text
 
     datasetname = "new"
@@ -58,7 +58,7 @@ def SCloadCorpus(basepath):
         text = f.read()
         text = text.replace('\\', '')
         text = text.split('\n')
-    print(len(text))
+    # print(len(text))
     corpus += text
 
     datasetname = "orig"
@@ -68,7 +68,7 @@ def SCloadCorpus(basepath):
         text = f.read()
         text = text.replace('\\', '')
         text = text.split('\n')
-    print(len(text))
+    # print(len(text))
     corpus += text
 
     datasetname = "new"
@@ -78,7 +78,7 @@ def SCloadCorpus(basepath):
         text = f.read()
         text = text.replace('\\', '')
         text = text.split('\n')
-    print(len(text))
+    # print(len(text))
     corpus += text
 
     datasetname = "orig"
@@ -88,7 +88,7 @@ def SCloadCorpus(basepath):
         text = f.read()
         text = text.replace('\\', '')
         text = text.split('\n')
-    print(len(text))
+    # print(len(text))
     corpus += text
 
     datasetname = "new"
@@ -98,7 +98,7 @@ def SCloadCorpus(basepath):
         text = f.read()
         text = text.replace('\\', '')
         text = text.split('\n')
-    print(len(text))
+    # print(len(text))
     corpus += text
 
     return corpus
